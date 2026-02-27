@@ -77,17 +77,19 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
 //  Colors
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
+
 private val DecadeBlue = Color(0xFF00AAFF)
 private val DecadeSelected = Color(0xFF00DDFF)
 private val NeonBlue = Color(0xFF00CFFF)
 private val SteelHighlight = Color(0xFFCCCCCC)
 
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
 //  LayoutConfig
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
+
 private data class LayoutConfig(
 	val wToolbar: Float,
 	val wCenter: Float,
@@ -205,7 +207,10 @@ fun MainScreen(state: MainScreenState, onAction: (MainScreenAction) -> Unit) {
 	}
 
 	val screenWidthDp = LocalConfiguration.current.screenWidthDp
-	val cfg = if (screenWidthDp > 800) TABLET_CONFIG else PHONE_CONFIG
+	val screenLayout =
+		LocalConfiguration.current.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK
+	val isTablet = screenLayout >= Configuration.SCREENLAYOUT_SIZE_LARGE && screenWidthDp > 800
+	val cfg = if (isTablet) TABLET_CONFIG else PHONE_CONFIG
 
 	Box(Modifier.fillMaxSize()) {
 
@@ -382,9 +387,10 @@ fun MainScreen(state: MainScreenState, onAction: (MainScreenAction) -> Unit) {
 	}
 }
 
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
 //  DecadesSection
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
+
 @Composable
 private fun DecadesSection(
 	state: MainScreenState,
@@ -421,7 +427,7 @@ private fun DecadesSection(
 	}
 }
 
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
 //  TrailsSection
 //  The trail images are fixed dp heights. They stack from the
 //  TOP of the box. The pointer spans the full box height.
@@ -431,7 +437,8 @@ private fun DecadesSection(
 //  Fix: align the trail Column to the BOTTOM of the BoxWithConstraints.
 //  This way the white trail's bottom edge = box bottom = pointer bottom.
 //  Both phone and tablet will show the pencil grounded on the white trail.
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
+
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 private fun TrailsSection(
@@ -457,15 +464,12 @@ private fun TrailsSection(
 
 		val density = LocalDensity.current
 
-		// Trail images have fixed dp heights — total is always the same regardless of row height.
-		// Align the column to the BOTTOM so the white trail's bottom = box bottom = pointer tip.
-		Column(
-			modifier = Modifier
-				.fillMaxWidth()
-				.align(Alignment.BottomCenter),
-			verticalArrangement = Arrangement.Bottom,
-		) {
-			// 1. trail_line_background_fixed — h=15dp, padding=2dp
+		// trail_line + dots sit at the TOP.
+		// A weight(1f) spacer fills the middle gap (stretches on tablet, tiny on phone).
+		// long_blue_trail + long_square_white_trail sit at the BOTTOM.
+		// The pointer fillMaxHeight() spans top→bottom so its tip = white trail bottom.
+		Column(Modifier.fillMaxSize()) {
+			// 1. trail_line_background_fixed — TOP
 			Image(
 				painter = painterResource(R.drawable.trail_line_background_fixed),
 				contentDescription = null,
@@ -475,7 +479,7 @@ private fun TrailsSection(
 					.height(15.dp)
 					.padding(2.dp),
 			)
-			// 2. point_background__mirrored — h=12dp, marginTop=3dp
+			// 2. point_background__mirrored — just below trail_line
 			AndroidView(
 				factory = { ctx ->
 					android.widget.ImageView(ctx).apply {
@@ -489,8 +493,9 @@ private fun TrailsSection(
 					.padding(top = 3.dp)
 					.padding(2.dp),
 			)
-			// 3. long_blue_trail — marginTop from config
-			Spacer(Modifier.height(cfg.trailsSpacerDp.dp))
+			// Flexible spacer — fills all remaining space between dots and blue trail
+			Spacer(Modifier.weight(1f))
+			// 3. long_blue_trail — BOTTOM group
 			Image(
 				painter = painterResource(R.drawable.long_blue_trail),
 				contentDescription = null,
@@ -499,9 +504,9 @@ private fun TrailsSection(
 					.fillMaxWidth()
 					.height(15.dp),
 			)
-			// Small gap between blue and white trail
+			// Small fixed gap between blue and white trail
 			Spacer(Modifier.height(cfg.trailsInnerWeight.dp))
-			// 4. long_square_white_trail — h=20dp, marginBottom=5dp
+			// 4. long_square_white_trail — bottommost, pointer tip aligns here
 			Image(
 				painter = painterResource(R.drawable.long_square_white_trail),
 				contentDescription = null,
@@ -542,9 +547,10 @@ private fun TrailsSection(
 	}
 }
 
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
 //  SongInfoSection
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
+
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 private fun SongInfoSection(
@@ -584,9 +590,10 @@ private fun SongInfoSection(
 	}
 }
 
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
 //  ProgressSection
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
+
 @Composable
 private fun ProgressSection(
 	state: MainScreenState,
@@ -619,9 +626,10 @@ private fun ProgressSection(
 	)
 }
 
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
 //  YouTube DisposableEffect
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
+
 @Composable
 fun YoutubeListenerDisposableEffect(
 	state: MainScreenState,
@@ -693,9 +701,10 @@ fun YoutubeListenerDisposableEffect(
 	}
 }
 
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
 //  Loading / Error
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
+
 @Composable
 private fun LoadingOverlay() {
 	Box(
@@ -734,9 +743,10 @@ private fun ErrorBanner(message: String, onDismiss: () -> Unit) {
 	}
 }
 
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
 //  Helpers
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
+
 @Composable
 fun LockScreenOrientation(orientation: Int) {
 	val context = LocalContext.current
@@ -748,9 +758,10 @@ fun LockScreenOrientation(orientation: Int) {
 	}
 }
 
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
 //  Previews
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
+
 @Preview(
 	showBackground = true,
 	device = "spec:width=1280dp,height=800dp,dpi=240,orientation=landscape",
