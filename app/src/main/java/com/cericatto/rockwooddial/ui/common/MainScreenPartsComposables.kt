@@ -37,10 +37,12 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.cericatto.rockwooddial.R
+import com.cericatto.rockwooddial.data.Song
 import com.cericatto.rockwooddial.ui.main_screen.LayoutConfig
 import com.cericatto.rockwooddial.ui.main_screen.MainScreenAction
 import com.cericatto.rockwooddial.ui.main_screen.MainScreenState
@@ -302,5 +304,309 @@ private fun ProgressSection(
 			activeTrackColor = NeonBlue,
 			inactiveTrackColor = Color(0xFF444444),
 		),
+	)
+}
+
+//--------------------------------------------------
+//  Preview helpers
+//--------------------------------------------------
+
+private val PHONE_CFG = LayoutConfig(
+	wToolbar = 2f, wCenter = 8f, wBottom = 2f,
+	wWindow = 2f, wRadio = 5f,
+	wDecades = 1f, wTrails = 1.2f, wSongInfo = 1.8f,
+	seekbarWeight = 7f, spacerWeight = 0f,
+	playBtnDp = 36f, knobDp = 123.75f, knobGapDp = 2f,
+	pointerWidthDp = 19f,
+	fontTitleSp = 49f, fontDecadeSp = 27f, fontSongSp = 21f,
+	sliderHeightDp = 12f, trailsSpacerDp = 4f, trailsInnerWeight = 3f,
+)
+
+private val TABLET_CFG = LayoutConfig(
+	wToolbar = 2f, wCenter = 8f, wBottom = 2f,
+	wWindow = 2f, wRadio = 5f,
+	wDecades = 1f, wTrails = 1.2f, wSongInfo = 1.8f,
+	seekbarWeight = 7f, spacerWeight = 0f,
+	playBtnDp = 150f, knobDp = 264f, knobGapDp = 5f,
+	pointerWidthDp = 22f,
+	fontTitleSp = 77f, fontDecadeSp = 53f, fontSongSp = 40f,
+	sliderHeightDp = 14f, trailsSpacerDp = 4f, trailsInnerWeight = 3f,
+)
+
+private fun stateWithSong(
+	decade: String = "70",
+	isPlaying: Boolean = false,
+	playback: Int = 60,
+	duration: Int = 354,
+	band: String = "Led Zeppelin",
+	title: String = "Kashmir",
+	year: String = "1975",
+) = MainScreenState(
+	songs = listOf(Song(decade, year, band, title, "fJ9rUzIMcZQ")),
+	isLoading = false,
+	isPlaying = isPlaying,
+	currentDecade = decade,
+	totalDurationSeconds = duration,
+	currentPlaybackTimeSeconds = playback,
+)
+
+private val emptyState = MainScreenState(
+	songs = emptyList(),
+	isLoading = false,
+	isPlaying = false,
+	currentDecade = "70",
+	totalDurationSeconds = 0,
+	currentPlaybackTimeSeconds = 0,
+)
+
+//--------------------------------------------------
+//  MainScreenToolbar Previews
+//--------------------------------------------------
+
+@Preview(
+	name = "Toolbar / Phone",
+	showBackground = true,
+	device = "spec:width=640dp,height=50dp,dpi=320",
+)
+@Composable
+private fun ToolbarPhonePreview() {
+	MainScreenToolbar(
+		cfg = PHONE_CFG,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+@Preview(
+	name = "Toolbar / Tablet",
+	showBackground = true,
+	device = "spec:width=1280dp,height=80dp,dpi=240",
+)
+@Composable
+private fun ToolbarTabletPreview() {
+	MainScreenToolbar(
+		cfg = TABLET_CFG,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+//--------------------------------------------------
+// MainScreenBottom Previews
+//--------------------------------------------------
+
+// Phone — paused, song loaded, slider at 25%
+@Preview(
+	name = "Bottom / Phone / Paused",
+	showBackground = true,
+	device = "spec:width=640dp,height=60dp,dpi=320",
+)
+@Composable
+private fun BottomPhonePausedPreview() {
+	MainScreenBottom(
+		state = stateWithSong(isPlaying = false, playback = 88, duration = 354),
+		onAction = {},
+		cfg = PHONE_CFG,
+		youtubePlayer = null,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Phone — playing, slider at 80%
+@Preview(
+	name = "Bottom / Phone / Playing",
+	showBackground = true,
+	device = "spec:width=640dp,height=60dp,dpi=320",
+)
+@Composable
+private fun BottomPhonePlayingPreview() {
+	MainScreenBottom(
+		state = stateWithSong(isPlaying = true, playback = 280, duration = 354),
+		onAction = {},
+		cfg = PHONE_CFG,
+		youtubePlayer = null,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Phone — no song loaded (slider and button disabled)
+@Preview(
+	name = "Bottom / Phone / No Song",
+	showBackground = true,
+	device = "spec:width=640dp,height=60dp,dpi=320",
+)
+@Composable
+private fun BottomPhoneNoSongPreview() {
+	MainScreenBottom(
+		state = emptyState,
+		onAction = {},
+		cfg = PHONE_CFG,
+		youtubePlayer = null,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Tablet — paused
+@Preview(
+	name = "Bottom / Tablet / Paused",
+	showBackground = true,
+	device = "spec:width=1280dp,height=100dp,dpi=240",
+)
+@Composable
+private fun BottomTabletPausedPreview() {
+	MainScreenBottom(
+		state = stateWithSong(isPlaying = false, playback = 60, duration = 354),
+		onAction = {},
+		cfg = TABLET_CFG,
+		youtubePlayer = null,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Tablet — playing
+@Preview(
+	name = "Bottom / Tablet / Playing",
+	showBackground = true,
+	device = "spec:width=1280dp,height=100dp,dpi=240",
+)
+@Composable
+private fun BottomTabletPlayingPreview() {
+	MainScreenBottom(
+		state = stateWithSong(isPlaying = true, playback = 250, duration = 354),
+		onAction = {},
+		cfg = TABLET_CFG,
+		youtubePlayer = null,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+//--------------------------------------------------
+// MainScreenCenter Previews
+// (YouTubePlayer can't render in preview, it shows black box)
+//--------------------------------------------------
+
+// Phone — 70s selected
+@Preview(
+	name = "Center / Phone / 70s selected",
+	showBackground = true,
+	device = "spec:width=640dp,height=280dp,dpi=320",
+)
+@Composable
+private fun CenterPhone70sPreview() {
+	val ctx = androidx.compose.ui.platform.LocalContext.current
+	MainScreenCenter(
+		state = stateWithSong(decade = "70", band = "Led Zeppelin", title = "Kashmir", year = "1975"),
+		onAction = {},
+		cfg = PHONE_CFG,
+		youTubePlayerView = YouTubePlayerView(ctx),
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Phone — 80s selected, long song name tests ellipsis
+@Preview(
+	name = "Center / Phone / 80s selected / Long title",
+	showBackground = true,
+	device = "spec:width=640dp,height=280dp,dpi=320",
+)
+@Composable
+private fun CenterPhone80sLongTitlePreview() {
+	val ctx = androidx.compose.ui.platform.LocalContext.current
+	MainScreenCenter(
+		state = stateWithSong(
+			decade = "80",
+			band = "Iron Maiden",
+			title = "The Number of the Beast (Live at Hammersmith)",
+			year = "1982",
+		),
+		onAction = {},
+		cfg = PHONE_CFG,
+		youTubePlayerView = YouTubePlayerView(ctx),
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Phone — no song loaded (empty state)
+@Preview(
+	name = "Center / Phone / No Song",
+	showBackground = true,
+	device = "spec:width=640dp,height=280dp,dpi=320",
+)
+@Composable
+private fun CenterPhoneNoSongPreview() {
+	val ctx = androidx.compose.ui.platform.LocalContext.current
+	MainScreenCenter(
+		state = emptyState,
+		onAction = {},
+		cfg = PHONE_CFG,
+		youTubePlayerView = YouTubePlayerView(ctx),
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Tablet — 90s selected
+@Preview(
+	name = "Center / Tablet / 90s selected",
+	showBackground = true,
+	device = "spec:width=1280dp,height=640dp,dpi=240",
+)
+@Composable
+private fun CenterTablet90sPreview() {
+	val ctx = androidx.compose.ui.platform.LocalContext.current
+	MainScreenCenter(
+		state = stateWithSong(
+			decade = "90",
+			band = "Soundgarden",
+			title = "Rusty Cage",
+			year = "1991",
+		),
+		onAction = {},
+		cfg = TABLET_CFG,
+		youTubePlayerView = YouTubePlayerView(ctx),
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Tablet — 50s selected (first decade)
+@Preview(
+	name = "Center / Tablet / 50s selected",
+	showBackground = true,
+	device = "spec:width=1280dp,height=640dp,dpi=240",
+)
+@Composable
+private fun CenterTablet50sPreview() {
+	val ctx = androidx.compose.ui.platform.LocalContext.current
+	MainScreenCenter(
+		state = stateWithSong(
+			decade = "50",
+			band = "Elvis Presley",
+			title = "Hound Dog",
+			year = "1956",
+		),
+		onAction = {},
+		cfg = TABLET_CFG,
+		youTubePlayerView = YouTubePlayerView(ctx),
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Tablet — 2000s selected (last decade)
+@Preview(
+	name = "Center / Tablet / 2000s selected",
+	showBackground = true,
+	device = "spec:width=1280dp,height=640dp,dpi=240",
+)
+@Composable
+private fun CenterTablet2000sPreview() {
+	val ctx = androidx.compose.ui.platform.LocalContext.current
+	MainScreenCenter(
+		state = stateWithSong(
+			decade = "2000",
+			band = "The White Stripes",
+			title = "Seven Nation Army",
+			year = "2003",
+		),
+		onAction = {},
+		cfg = TABLET_CFG,
+		youTubePlayerView = YouTubePlayerView(ctx),
+		modifier = Modifier.fillMaxSize(),
 	)
 }

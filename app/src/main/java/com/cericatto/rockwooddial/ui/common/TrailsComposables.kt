@@ -24,6 +24,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -32,6 +33,7 @@ import com.cericatto.rockwooddial.R
 import com.cericatto.rockwooddial.ui.main_screen.LayoutConfig
 import com.cericatto.rockwooddial.ui.main_screen.MainScreenAction
 import com.cericatto.rockwooddial.ui.main_screen.MainScreenState
+import com.cericatto.rockwooddial.data.Song
 
 //--------------------------------------------------
 //  TrailsSection
@@ -181,4 +183,203 @@ fun TrailsPointer(
 				}
 			},
 	)
+}
+
+//--------------------------------------------------
+//  Preview Helpers
+//--------------------------------------------------
+
+private val PHONE_CFG = LayoutConfig(
+	wToolbar = 2f,
+	wCenter = 8f,
+	wBottom = 2f,
+	wWindow = 2f,
+	wRadio = 5f,
+	wDecades = 1f,
+	wTrails = 1.2f,
+	wSongInfo = 1.8f,
+	seekbarWeight = 7f,
+	spacerWeight = 0f,
+	playBtnDp = 36f,
+	knobDp = 123.75f,
+	knobGapDp = 2f,
+	pointerWidthDp = 19f,
+	fontTitleSp = 49f,
+	fontDecadeSp = 27f,
+	fontSongSp = 21f,
+	sliderHeightDp = 12f,
+	trailsSpacerDp = 4f,
+	trailsInnerWeight = 3f
+)
+
+private val TABLET_CFG = LayoutConfig(
+	wToolbar = 2f,
+	wCenter = 8f,
+	wBottom = 2f,
+	wWindow = 2f,
+	wRadio = 5f,
+	wDecades = 1f,
+	wTrails = 1.2f,
+	wSongInfo = 1.8f,
+	seekbarWeight = 7f,
+	spacerWeight = 0f,
+	playBtnDp = 150f,
+	knobDp = 264f,
+	knobGapDp = 5f,
+	pointerWidthDp = 22f,
+	fontTitleSp = 77f,
+	fontDecadeSp = 53f,
+	fontSongSp = 40f,
+	sliderHeightDp = 14f,
+	trailsSpacerDp = 4f,
+	trailsInnerWeight = 3f
+)
+
+private fun previewState(decade: String) = MainScreenState(
+	songs = listOf(
+		Song(
+			"70",
+			"1975",
+			"Led Zeppelin",
+			"Kashmir",
+			"fJ9rUzIMcZQ"
+		)
+	),
+	isLoading = false,
+	isPlaying = false,
+	currentDecade = decade,
+	totalDurationSeconds = 354,
+	currentPlaybackTimeSeconds = 60,
+)
+
+//--------------------------------------------------
+// TrailsSection Previews
+//--------------------------------------------------
+
+// Phone — pointer on 70s (center)
+@Preview(
+	name = "TrailsSection / Phone / Pointer on 70s",
+	showBackground = true,
+	backgroundColor = 0xFF000000,
+	device = "spec:width=640dp,height=60dp,dpi=320",
+)
+@Composable
+private fun TrailsSectionPhone70sPreview() {
+	TrailsSection(
+		state = previewState("70"),
+		onAction = {},
+		cfg = PHONE_CFG,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Phone — pointer on 50s (far left)
+@Preview(
+	name = "TrailsSection / Phone / Pointer on 50s",
+	showBackground = true,
+	backgroundColor = 0xFF000000,
+	device = "spec:width=640dp,height=60dp,dpi=320",
+)
+@Composable
+private fun TrailsSectionPhone50sPreview() {
+	TrailsSection(
+		state = previewState("50"),
+		onAction = {},
+		cfg = PHONE_CFG,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Phone — pointer on 2000s (far right)
+@Preview(
+	name = "TrailsSection / Phone / Pointer on 2000s",
+	showBackground = true,
+	backgroundColor = 0xFF000000,
+	device = "spec:width=640dp,height=60dp,dpi=320",
+)
+@Composable
+private fun TrailsSectionPhone2000sPreview() {
+	TrailsSection(
+		state = previewState("2000"),
+		onAction = {},
+		cfg = PHONE_CFG,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Tablet — pointer on 70s
+@Preview(
+	name = "TrailsSection / Tablet / Pointer on 70s",
+	showBackground = true,
+	backgroundColor = 0xFF000000,
+	device = "spec:width=1280dp,height=96dp,dpi=240",
+)
+@Composable
+private fun TrailsSectionTablet70sPreview() {
+	TrailsSection(
+		state = previewState("70"),
+		onAction = {},
+		cfg = TABLET_CFG,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Tablet — pointer on 90s
+@Preview(
+	name = "TrailsSection / Tablet / Pointer on 90s",
+	showBackground = true,
+	backgroundColor = 0xFF000000,
+	device = "spec:width=1280dp,height=96dp,dpi=240",
+)
+@Composable
+private fun TrailsSectionTablet90sPreview() {
+	TrailsSection(
+		state = previewState("90"),
+		onAction = {},
+		cfg = TABLET_CFG,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+//--------------------------------------------------
+// TrailsColumn Previews
+//--------------------------------------------------
+
+// TrailsColumn — phone height
+@Preview(
+	name = "TrailsColumn / Phone height",
+	showBackground = true,
+	backgroundColor = 0xFF000000,
+	widthDp = 400,
+	heightDp = 60,
+)
+@Composable
+private fun TrailsColumnPhonePreview() {
+	TrailsColumn(cfg = PHONE_CFG)
+}
+
+// TrailsColumn — tablet height (taller row, spacer stretches)
+@Preview(
+	name = "TrailsColumn / Tablet height",
+	showBackground = true,
+	backgroundColor = 0xFF000000,
+	widthDp = 800,
+	heightDp = 96,
+)
+@Composable
+private fun TrailsColumnTabletPreview() {
+	TrailsColumn(cfg = TABLET_CFG)
+}
+
+// TrailsColumn — extra tall (stress test: spacer must absorb height)
+@Preview(
+	name = "TrailsColumn / Extra tall",
+	showBackground = true,
+	backgroundColor = 0xFF000000,
+	widthDp = 400,
+	heightDp = 160,
+)
+@Composable
+private fun TrailsColumnExtraTallPreview() {
+	TrailsColumn(cfg = TABLET_CFG)
 }
