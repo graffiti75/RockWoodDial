@@ -1,6 +1,10 @@
 package com.cericatto.rockwooddial.ui.common
 
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.media.AudioManager
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -116,7 +120,6 @@ fun KnobVolumeControl(
 	val context = LocalContext.current
 	val audioManager = context.getSystemService(AudioManager::class.java)
 
-	// Guard against AudioManager returning 0 in preview environment
 	val maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC).toFloat()
 		.takeIf { it > 0f } ?: 1f
 	val initialVol = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC).toFloat()
@@ -126,9 +129,29 @@ fun KnobVolumeControl(
 	var knobAngle by remember { mutableFloatStateOf(initialAngle) }
 	val animatedAngle by animateFloatAsState(
 		targetValue = knobAngle,
-		animationSpec = tween(durationMillis = 100),
+		animationSpec = tween(durationMillis = 300),
 		label = "knob_rotation"
 	)
+
+	// Listen for external volume changes (hardware buttons, system UI, etc.)
+	DisposableEffect(Unit) {
+		val receiver = object : BroadcastReceiver() {
+			override fun onReceive(context: Context, intent: Intent) {
+				val streamType = intent.getIntExtra(
+					"android.media.EXTRA_VOLUME_STREAM_TYPE", -1
+				)
+				if (streamType == AudioManager.STREAM_MUSIC) {
+					val newVol = audioManager.getStreamVolume(
+						AudioManager.STREAM_MUSIC
+					).toFloat()
+					knobAngle = 30f + (newVol / maxVol) * 120f
+				}
+			}
+		}
+		val filter = IntentFilter("android.media.VOLUME_CHANGED_ACTION")
+		context.registerReceiver(receiver, filter)
+		onDispose { context.unregisterReceiver(receiver) }
+	}
 
 	Image(
 		painter = painterResource(R.drawable.button_round_big),
