@@ -53,6 +53,7 @@ import com.cericatto.rockwooddial.ui.theme.DecadeBlue
 import com.cericatto.rockwooddial.ui.theme.DecadeSelected
 import com.cericatto.rockwooddial.ui.theme.NeonBlue
 import com.cericatto.rockwooddial.ui.theme.SteelHighlight
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
@@ -93,6 +94,7 @@ fun MainScreenCenter(
 	cfg: LayoutConfig,
 	youTubePlayerView: YouTubePlayerView,
 	modifier: Modifier = Modifier,
+	playerState: PlayerConstants.PlayerState
 ) {
 	Row(
 		modifier.background(Color.Black)
@@ -105,6 +107,13 @@ fun MainScreenCenter(
 				.background(Color.Black)
 		) {
 			// VU Meters Row
+			VuMetersRow(
+				playerState = playerState,
+				modifier = Modifier
+					.fillMaxWidth()
+					.weight(0.2f),
+			)
+			/*
 			Row(
 				Modifier
 					.fillMaxWidth()
@@ -129,6 +138,7 @@ fun MainScreenCenter(
 						.padding(2.dp),
 				)
 			}
+			*/
 			VerticalDivider(modifier = Modifier.size(
 				cfg.paddingBottomBetweenVuMetersAndYoutubePlayer.dp)
 			)
@@ -508,6 +518,7 @@ private fun CenterPhone70sPreview() {
 		onAction = {},
 		cfg = PHONE_CONFIG,
 		youTubePlayerView = YouTubePlayerView(ctx),
+		playerState = PlayerConstants.PlayerState.PLAYING,
 		modifier = Modifier.fillMaxSize(),
 	)
 }
@@ -531,6 +542,7 @@ private fun CenterPhone80sLongTitlePreview() {
 		onAction = {},
 		cfg = PHONE_CONFIG,
 		youTubePlayerView = YouTubePlayerView(ctx),
+		playerState = PlayerConstants.PlayerState.PLAYING,
 		modifier = Modifier.fillMaxSize(),
 	)
 }
@@ -549,6 +561,7 @@ private fun CenterPhoneNoSongPreview() {
 		onAction = {},
 		cfg = PHONE_CONFIG,
 		youTubePlayerView = YouTubePlayerView(ctx),
+		playerState = PlayerConstants.PlayerState.PLAYING,
 		modifier = Modifier.fillMaxSize(),
 	)
 }
@@ -572,6 +585,7 @@ private fun CenterTablet90sPreview() {
 		onAction = {},
 		cfg = TABLET_CONFIG,
 		youTubePlayerView = YouTubePlayerView(ctx),
+		playerState = PlayerConstants.PlayerState.PLAYING,
 		modifier = Modifier.fillMaxSize(),
 	)
 }
@@ -595,6 +609,7 @@ private fun CenterTablet50sPreview() {
 		onAction = {},
 		cfg = TABLET_CONFIG,
 		youTubePlayerView = YouTubePlayerView(ctx),
+		playerState = PlayerConstants.PlayerState.PLAYING,
 		modifier = Modifier.fillMaxSize(),
 	)
 }
@@ -618,6 +633,7 @@ private fun CenterTablet2000sPreview() {
 		onAction = {},
 		cfg = TABLET_CONFIG,
 		youTubePlayerView = YouTubePlayerView(ctx),
+		playerState = PlayerConstants.PlayerState.PLAYING,
 		modifier = Modifier.fillMaxSize(),
 	)
 }

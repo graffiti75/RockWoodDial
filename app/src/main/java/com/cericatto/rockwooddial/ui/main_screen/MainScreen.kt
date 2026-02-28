@@ -160,6 +160,7 @@ fun MainScreen(
 	val youtubePlayerState = remember { mutableStateOf<YouTubePlayer?>(null) }
 	val youtubePlayer = youtubePlayerState.value
 	val lifecycleOwner = LocalLifecycleOwner.current
+	val playerState = remember { mutableStateOf(PlayerConstants.PlayerState.UNSTARTED) }
 
 	YoutubeListenerDisposableEffect(
 		state = state,
@@ -167,6 +168,7 @@ fun MainScreen(
 		lifecycleOwner = lifecycleOwner,
 		youTubePlayerView = youTubePlayerView,
 		youtubePlayerState = youtubePlayerState,
+		playerState = playerState
 	)
 
 	LaunchedEffect(youtubePlayer, state.currentSong) {
@@ -206,7 +208,8 @@ fun MainScreen(
 		onAction = onAction,
 		cfg = cfg,
 		youTubePlayerView = youTubePlayerView,
-		youtubePlayer = youtubePlayer
+		youtubePlayer = youtubePlayer,
+		playerState = playerState.value
 	)
 }
 
@@ -220,7 +223,8 @@ private fun MainScreenContent(
 	onAction: (MainScreenAction) -> Unit,
 	cfg: LayoutConfig,
 	youTubePlayerView: YouTubePlayerView,
-	youtubePlayer: YouTubePlayer?
+	youtubePlayer: YouTubePlayer?,
+	playerState: PlayerConstants.PlayerState
 ) {
 	Box(
 		Modifier.fillMaxSize()
@@ -247,6 +251,7 @@ private fun MainScreenContent(
 				onAction = onAction,
 				cfg = cfg,
 				youTubePlayerView = youTubePlayerView,
+				playerState = playerState,
 				modifier = Modifier
 					.fillMaxWidth()
 					.weight(cfg.wCenter),
@@ -292,6 +297,7 @@ fun YoutubeListenerDisposableEffect(
 	lifecycleOwner: LifecycleOwner,
 	youTubePlayerView: YouTubePlayerView,
 	youtubePlayerState: MutableState<YouTubePlayer?>,
+	playerState: MutableState<PlayerConstants.PlayerState>
 ) {
 	DisposableEffect(lifecycleOwner) {
 		val listener = object : AbstractYouTubePlayerListener() {
@@ -315,6 +321,7 @@ fun YoutubeListenerDisposableEffect(
 				youTubePlayer: YouTubePlayer,
 				state: PlayerConstants.PlayerState,
 			) {
+				playerState.value = state
 				when (state) {
 					PlayerConstants.PlayerState.ENDED -> onAction(MainScreenAction.NextSong)
 					else -> {}
