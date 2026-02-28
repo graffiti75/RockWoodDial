@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -201,7 +202,7 @@ fun MainScreenBottom(
 		Row(
 			Modifier
 				.fillMaxSize()
-				.padding(start = 8.dp, end = (cfg.playBtnDp + cfg.knobDp).dp),
+				.padding(start = 8.dp, end = (cfg.playBtnDp * 2 + cfg.knobDp).dp),
 			verticalAlignment = Alignment.CenterVertically,
 		) {
 			Box(Modifier.weight(1f)) {
@@ -218,7 +219,7 @@ fun MainScreenBottom(
 			Modifier
 				.size(cfg.playBtnDp.dp)
 				.align(Alignment.CenterEnd)
-				.offset(x = (-cfg.knobDp).dp)
+				.offset(x = (-cfg.knobDp - cfg.playBtnDp).dp)
 				.clickable(enabled = state.currentSong != null) {
 					onAction(MainScreenAction.PlayPause)
 				},
@@ -227,6 +228,24 @@ fun MainScreenBottom(
 			Icon(
 				imageVector = if (state.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
 				contentDescription = if (state.isPlaying) "Pause" else "Play",
+				tint = Color.White,
+				modifier = Modifier.size((cfg.playBtnDp * 0.8f).dp),
+			)
+		}
+		// Next button — to the left of the play button
+		Box(
+			Modifier
+				.size(cfg.playBtnDp.dp)
+				.align(Alignment.CenterEnd)
+				.offset(x = (-cfg.knobDp).dp)
+				.clickable(enabled = state.currentSong != null) {
+					onAction(MainScreenAction.NextSong)
+				},
+			contentAlignment = Alignment.Center,
+		) {
+			Icon(
+				imageVector = Icons.Default.SkipNext,
+				contentDescription = "Next song",
 				tint = Color.White,
 				modifier = Modifier.size((cfg.playBtnDp * 0.8f).dp),
 			)
