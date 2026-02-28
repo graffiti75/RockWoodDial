@@ -18,7 +18,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -110,7 +109,7 @@ private val TABLET_CONFIG = LayoutConfig(
 	seekbarWeight = 7f,
 	spacerWeight = 0f,
 	playBtnDp = 150f,
-	knobDp = 264f,
+	knobDp = 171f,
 	knobGapDp = 5f,
 	pointerWidthDp = 22f,
 	fontTitleSp = 77f,
@@ -149,8 +148,10 @@ fun MainScreenRoot(viewModel: MainScreenViewModel = hiltViewModel()) {
 @Composable
 fun MainScreen(
 	state: MainScreenState,
-	onAction: (MainScreenAction
-) -> Unit) {
+	onAction: (
+		MainScreenAction
+	) -> Unit
+) {
 	val context = LocalContext.current
 	val youTubePlayerView = remember { YouTubePlayerView(context) }
 	val youtubePlayerState = remember { mutableStateOf<YouTubePlayer?>(null) }
@@ -168,16 +169,17 @@ fun MainScreen(
 	LaunchedEffect(youtubePlayer, state.currentSong) {
 		youtubePlayer?.let { player ->
 			state.currentSong?.let { song ->
-				if (state.isPlaying)
+				if (state.isPlaying) {
 					player.loadVideo(
 						song.youtubeId,
 						state.currentPlaybackTimeSeconds.toFloat()
 					)
-				else
+				} else {
 					player.cueVideo(
 						song.youtubeId,
 						state.currentPlaybackTimeSeconds.toFloat()
 					)
+				}
 			}
 		}
 	}
@@ -288,8 +290,6 @@ fun YoutubeListenerDisposableEffect(
 	youTubePlayerView: YouTubePlayerView,
 	youtubePlayerState: MutableState<YouTubePlayer?>,
 ) {
-	val currentIsPlayingState = rememberUpdatedState(state.isPlaying)
-
 	DisposableEffect(lifecycleOwner) {
 		val listener = object : AbstractYouTubePlayerListener() {
 			override fun onReady(youTubePlayer: YouTubePlayer) {
@@ -312,14 +312,7 @@ fun YoutubeListenerDisposableEffect(
 				youTubePlayer: YouTubePlayer,
 				state: PlayerConstants.PlayerState,
 			) {
-				val isPlayingInVM = currentIsPlayingState.value
 				when (state) {
-					PlayerConstants.PlayerState.PLAYING ->
-						if (!isPlayingInVM) onAction(MainScreenAction.SetPlaying(true))
-
-					PlayerConstants.PlayerState.PAUSED ->
-						if (isPlayingInVM) onAction(MainScreenAction.SetPlaying(false))
-
 					PlayerConstants.PlayerState.ENDED -> onAction(MainScreenAction.NextSong)
 					else -> {}
 				}

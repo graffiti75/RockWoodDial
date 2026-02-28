@@ -43,16 +43,23 @@ class MainScreenViewModel @Inject constructor(
 							currentPlaybackTimeSeconds = 0,
 							totalDurationSeconds = 0,
 							error = null,
+							isPlaying = true,  // auto-play on decade change
 						)
 					}
 				} else {
 					_state.update {
-						it.copy(isLoading = false, error = "No songs found for the ${decade}s.")
+						it.copy(
+							isLoading = false,
+							error = "No songs found for the ${decade}s."
+						)
 					}
 				}
 			} catch (e: Exception) {
 				_state.update {
-					it.copy(isLoading = false, error = "Error loading songs: ${e.message}")
+					it.copy(
+						isLoading = false,
+						error = "Error loading songs: ${e.message}"
+					)
 				}
 			}
 		}
@@ -60,54 +67,85 @@ class MainScreenViewModel @Inject constructor(
 
 	fun onAction(action: MainScreenAction) {
 		when (action) {
-			is MainScreenAction.PlayPause -> {
-				if (_state.value.songs.isEmpty()) return
-				_state.update { it.copy(isPlaying = !it.isPlaying) }
-			}
-			is MainScreenAction.SetPlaying -> {
-				if (_state.value.songs.isEmpty()) return
-				if (_state.value.isPlaying != action.playing)
-					_state.update { it.copy(isPlaying = action.playing) }
-			}
-			is MainScreenAction.NextSong -> {
-				if (_state.value.songs.isEmpty()) return
-				goToNextSong()
-			}
-			is MainScreenAction.PreviousSong -> {
-				if (_state.value.songs.isEmpty()) return
-				goToPreviousSong()
-			}
-			is MainScreenAction.SeekTo -> {
-				_state.update { it.copy(currentPlaybackTimeSeconds = action.positionSeconds) }
-			}
-			is MainScreenAction.UpdatePlaybackTime -> {
-				_state.update { it.copy(currentPlaybackTimeSeconds = action.timeSeconds) }
-			}
-			is MainScreenAction.UpdateTotalDuration -> {
-				_state.update { it.copy(totalDurationSeconds = action.durationSeconds) }
-			}
-			is MainScreenAction.OnError -> {
-				_state.update {
-					it.copy(
-						error = action.error,
-						isLoading = false,
-						isPlaying = false
-					)
-				}
-			}
+			is MainScreenAction.PlayPause -> togglePlayPause()
+			is MainScreenAction.SetPlaying -> setPlaying(action.playing)
+			is MainScreenAction.NextSong -> onNextSong()
+			is MainScreenAction.PreviousSong -> onPreviousSong()
+			is MainScreenAction.SeekTo -> seekTo(action.positionSeconds)
+			is MainScreenAction.UpdatePlaybackTime -> updatePlaybackTime(action.timeSeconds)
+			is MainScreenAction.UpdateTotalDuration -> updateTotalDuration(action.durationSeconds)
+			is MainScreenAction.OnError -> onError(action.error)
 			is MainScreenAction.DismissError -> goToNextSong()
-			is MainScreenAction.ChangeDecade -> {
-				_state.update {
-					it.copy(
-						currentDecade = action.decade,
-						isPrevButtonEnabled = false
-					)
-				}
-				loadSongs(action.decade)
+			is MainScreenAction.ChangeDecade -> changeDecade(action.decade)
+			is MainScreenAction.OnTunerChanged -> onTunerChanged(action.fraction)
+		}
+	}
+
+	private fun togglePlayPause() {
+		if (_state.value.songs.isEmpty()) return
+		_state.update { it.copy(isPlaying = !it.isPlaying) }
+	}
+
+	private fun setPlaying(playing: Boolean) {
+		if (_state.value.songs.isEmpty()) return
+		if (_state.value.isPlaying != playing)
+			_state.update { it.copy(isPlaying = playing) }
+	}
+
+	private fun onNextSong() {
+		if (_state.value.songs.isEmpty()) return
+		goToNextSong()
+	}
+
+	private fun onPreviousSong() {
+		if (_state.value.songs.isEmpty()) return
+		goToPreviousSong()
+	}
+
+	private fun seekTo(positionSeconds: Int) {
+		_state.update { it.copy(currentPlaybackTimeSeconds = positionSeconds) }
+	}
+
+	private fun updatePlaybackTime(timeSeconds: Int) {
+		_state.update { it.copy(currentPlaybackTimeSeconds = timeSeconds) }
+	}
+
+	private fun updateTotalDuration(durationSeconds: Int) {
+		_state.update { it.copy(totalDurationSeconds = durationSeconds) }
+	}
+
+	private fun onError(error: String) {
+//		_state.update {
+//			it.copy(
+//				error = error,
+//				isLoading = false,
+//				isPlaying = false
+//			)
+//		}
+		goToNextSong()
+	}
+
+	private fun changeDecade(decade: String) {
+		_state.update { it.copy(currentDecade = decade, isPrevButtonEnabled = false) }
+		loadSongs(decade)
+	}
+
+	private fun onTunerChanged(fraction: Float) {
+		val songs = _state.value.songs
+		if (songs.isEmpty()) return
+		val newIndex = (fraction * songs.size).toInt().coerceIn(0, songs.size - 1)
+		if (newIndex != _state.value.currentSongIndex) {
+			_state.update {
+				it.copy(
+					tunerFraction = fraction,
+					currentSongIndex = newIndex,
+					currentPlaybackTimeSeconds = 0,
+					totalDurationSeconds = 0,
+					isPlaying = true,
+				)
 			}
-			is MainScreenAction.OnTunerChanged -> {
-				_state.update { it.copy(tunerFraction = action.fraction) }
-			}
+		} else {
+			_state.update { it.copy(tunerFraction = fraction) }
 		}
 	}
 
