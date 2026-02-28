@@ -31,7 +31,6 @@ class MainScreenViewModel @Inject constructor(
 
 	fun loadSongs(decade: String) {
 		viewModelScope.launch(dispatcher) {
-			_state.update { it.copy(isLoading = true) }
 			try {
 				val songs = songParser.parseSongs(decade).shuffled()
 				if (songs.isNotEmpty()) {
@@ -153,8 +152,8 @@ class MainScreenViewModel @Inject constructor(
 		_state.update { s ->
 			s.copy(
 				currentSongIndex = (s.currentSongIndex + 1) % s.songs.size,
-				currentPlaybackTimeSeconds = 0,
-				totalDurationSeconds = 0,
+//				currentPlaybackTimeSeconds = 0,
+//				totalDurationSeconds = 0,
 				isPlaying = true,
 				error = null,
 				isPrevButtonEnabled = true,
@@ -167,8 +166,8 @@ class MainScreenViewModel @Inject constructor(
 			val prev = (s.currentSongIndex - 1 + s.songs.size) % s.songs.size
 			s.copy(
 				currentSongIndex = prev,
-				currentPlaybackTimeSeconds = 0,
-				totalDurationSeconds = 0,
+//				currentPlaybackTimeSeconds = 0,
+//				totalDurationSeconds = 0,
 				isPlaying = true,
 				isPrevButtonEnabled = true,
 			)
