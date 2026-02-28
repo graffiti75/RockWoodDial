@@ -55,7 +55,7 @@ data class LayoutConfig(
 	val wToolbar: Float,
 	val wCenter: Float,
 	val wBottom: Float,
-	val wWindow: Float,
+	val wYoutubePlayer: Float,
 	val wRadio: Float,
 	val wDecades: Float,
 	val wTrails: Float,
@@ -72,14 +72,15 @@ data class LayoutConfig(
 	val sliderHeightDp: Float,
 	val trailsSpacerDp: Float,
 	val trailsInnerWeight: Float,
+	val paddingBottomBetweenVuMetersAndYoutubePlayer: Float
 )
 
-private val PHONE_CONFIG = LayoutConfig(
+val PHONE_CONFIG = LayoutConfig(
 	wToolbar = 2f,
 	wCenter = 8f,
 	wBottom = 2f,
-	wWindow = 2f,
-	wRadio = 5f,
+	wYoutubePlayer = 4f,
+	wRadio = 6f,
 	wDecades = 1f,
 	wTrails = 1.2f,
 	wSongInfo = 1.8f,
@@ -90,19 +91,20 @@ private val PHONE_CONFIG = LayoutConfig(
 	knobGapDp = 2f,
 	pointerWidthDp = 19f,
 	fontTitleSp = 49f,
-	fontDecadeSp = 27f,
+	fontDecadeSp = 20f,
 	fontSongSp = 21f,
 	sliderHeightDp = 12f,
 	trailsSpacerDp = 4f,
 	trailsInnerWeight = 3f,
+	paddingBottomBetweenVuMetersAndYoutubePlayer = 10f
 )
 
-private val TABLET_CONFIG = LayoutConfig(
+val TABLET_CONFIG = LayoutConfig(
 	wToolbar = 2f,
 	wCenter = 8f,
 	wBottom = 2f,
-	wWindow = 2f,
-	wRadio = 5f,
+	wYoutubePlayer = 5f,
+	wRadio = 6f,
 	wDecades = 1f,
 	wTrails = 1.2f,
 	wSongInfo = 1.8f,
@@ -113,11 +115,12 @@ private val TABLET_CONFIG = LayoutConfig(
 	knobGapDp = 5f,
 	pointerWidthDp = 22f,
 	fontTitleSp = 77f,
-	fontDecadeSp = 53f,
+	fontDecadeSp = 36f,
 	fontSongSp = 40f,
 	sliderHeightDp = 14f,
 	trailsSpacerDp = 4f,
 	trailsInnerWeight = 3f,
+	paddingBottomBetweenVuMetersAndYoutubePlayer = 50f
 )
 
 //--------------------------------------------------

@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -46,6 +47,8 @@ import com.cericatto.rockwooddial.data.Song
 import com.cericatto.rockwooddial.ui.main_screen.LayoutConfig
 import com.cericatto.rockwooddial.ui.main_screen.MainScreenAction
 import com.cericatto.rockwooddial.ui.main_screen.MainScreenState
+import com.cericatto.rockwooddial.ui.main_screen.PHONE_CONFIG
+import com.cericatto.rockwooddial.ui.main_screen.TABLET_CONFIG
 import com.cericatto.rockwooddial.ui.theme.DecadeBlue
 import com.cericatto.rockwooddial.ui.theme.DecadeSelected
 import com.cericatto.rockwooddial.ui.theme.NeonBlue
@@ -94,12 +97,42 @@ fun MainScreenCenter(
 	Row(
 		modifier.background(Color.Black)
 	) {
-		// YouTube window column
+		// Left column: VU meters on top, YouTube player on bottom
 		Column(
 			Modifier
-				.weight(cfg.wWindow)
+				.weight(cfg.wYoutubePlayer)
 				.fillMaxHeight()
+				.background(Color.Black)
 		) {
+			// VU Meters Row
+			Row(
+				Modifier
+					.fillMaxWidth()
+					.weight(0.2f)
+			) {
+				Image(
+					painter = painterResource(R.drawable.power),
+					contentDescription = "Power",
+					contentScale = ContentScale.FillBounds,
+					modifier = Modifier
+						.weight(1f)
+						.fillMaxHeight()
+						.padding(2.dp),
+				)
+				Image(
+					painter = painterResource(R.drawable.signal),
+					contentDescription = "Signal",
+					contentScale = ContentScale.FillBounds,
+					modifier = Modifier
+						.weight(1f)
+						.fillMaxHeight()
+						.padding(2.dp),
+				)
+			}
+			VerticalDivider(modifier = Modifier.size(
+				cfg.paddingBottomBetweenVuMetersAndYoutubePlayer.dp)
+			)
+			// YouTube player
 			Box(
 				Modifier
 					.fillMaxWidth()
@@ -115,7 +148,7 @@ fun MainScreenCenter(
 				)
 			}
 		}
-		// Radio column: decades + trails + song info
+		// Right column: decades + trails + song info
 		Column(
 			Modifier
 				.weight(cfg.wRadio)
@@ -311,28 +344,6 @@ private fun ProgressSection(
 //  Preview helpers
 //--------------------------------------------------
 
-private val PHONE_CFG = LayoutConfig(
-	wToolbar = 2f, wCenter = 8f, wBottom = 2f,
-	wWindow = 2f, wRadio = 5f,
-	wDecades = 1f, wTrails = 1.2f, wSongInfo = 1.8f,
-	seekbarWeight = 7f, spacerWeight = 0f,
-	playBtnDp = 36f, knobDp = 123.75f, knobGapDp = 2f,
-	pointerWidthDp = 19f,
-	fontTitleSp = 49f, fontDecadeSp = 27f, fontSongSp = 21f,
-	sliderHeightDp = 12f, trailsSpacerDp = 4f, trailsInnerWeight = 3f,
-)
-
-private val TABLET_CFG = LayoutConfig(
-	wToolbar = 2f, wCenter = 8f, wBottom = 2f,
-	wWindow = 2f, wRadio = 5f,
-	wDecades = 1f, wTrails = 1.2f, wSongInfo = 1.8f,
-	seekbarWeight = 7f, spacerWeight = 0f,
-	playBtnDp = 150f, knobDp = 264f, knobGapDp = 5f,
-	pointerWidthDp = 22f,
-	fontTitleSp = 77f, fontDecadeSp = 53f, fontSongSp = 40f,
-	sliderHeightDp = 14f, trailsSpacerDp = 4f, trailsInnerWeight = 3f,
-)
-
 private fun stateWithSong(
 	decade: String = "70",
 	isPlaying: Boolean = false,
@@ -371,7 +382,7 @@ private val emptyState = MainScreenState(
 @Composable
 private fun ToolbarPhonePreview() {
 	MainScreenToolbar(
-		cfg = PHONE_CFG,
+		cfg = PHONE_CONFIG,
 		modifier = Modifier.fillMaxSize(),
 	)
 }
@@ -384,7 +395,7 @@ private fun ToolbarPhonePreview() {
 @Composable
 private fun ToolbarTabletPreview() {
 	MainScreenToolbar(
-		cfg = TABLET_CFG,
+		cfg = TABLET_CONFIG,
 		modifier = Modifier.fillMaxSize(),
 	)
 }
@@ -404,7 +415,7 @@ private fun BottomPhonePausedPreview() {
 	MainScreenBottom(
 		state = stateWithSong(isPlaying = false, playback = 88, duration = 354),
 		onAction = {},
-		cfg = PHONE_CFG,
+		cfg = PHONE_CONFIG,
 		youtubePlayer = null,
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -421,7 +432,7 @@ private fun BottomPhonePlayingPreview() {
 	MainScreenBottom(
 		state = stateWithSong(isPlaying = true, playback = 280, duration = 354),
 		onAction = {},
-		cfg = PHONE_CFG,
+		cfg = PHONE_CONFIG,
 		youtubePlayer = null,
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -438,7 +449,7 @@ private fun BottomPhoneNoSongPreview() {
 	MainScreenBottom(
 		state = emptyState,
 		onAction = {},
-		cfg = PHONE_CFG,
+		cfg = PHONE_CONFIG,
 		youtubePlayer = null,
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -455,7 +466,7 @@ private fun BottomTabletPausedPreview() {
 	MainScreenBottom(
 		state = stateWithSong(isPlaying = false, playback = 60, duration = 354),
 		onAction = {},
-		cfg = TABLET_CFG,
+		cfg = TABLET_CONFIG,
 		youtubePlayer = null,
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -472,7 +483,7 @@ private fun BottomTabletPlayingPreview() {
 	MainScreenBottom(
 		state = stateWithSong(isPlaying = true, playback = 250, duration = 354),
 		onAction = {},
-		cfg = TABLET_CFG,
+		cfg = TABLET_CONFIG,
 		youtubePlayer = null,
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -495,7 +506,7 @@ private fun CenterPhone70sPreview() {
 	MainScreenCenter(
 		state = stateWithSong(decade = "70", band = "Led Zeppelin", title = "Kashmir", year = "1975"),
 		onAction = {},
-		cfg = PHONE_CFG,
+		cfg = PHONE_CONFIG,
 		youTubePlayerView = YouTubePlayerView(ctx),
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -518,7 +529,7 @@ private fun CenterPhone80sLongTitlePreview() {
 			year = "1982",
 		),
 		onAction = {},
-		cfg = PHONE_CFG,
+		cfg = PHONE_CONFIG,
 		youTubePlayerView = YouTubePlayerView(ctx),
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -536,7 +547,7 @@ private fun CenterPhoneNoSongPreview() {
 	MainScreenCenter(
 		state = emptyState,
 		onAction = {},
-		cfg = PHONE_CFG,
+		cfg = PHONE_CONFIG,
 		youTubePlayerView = YouTubePlayerView(ctx),
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -559,7 +570,7 @@ private fun CenterTablet90sPreview() {
 			year = "1991",
 		),
 		onAction = {},
-		cfg = TABLET_CFG,
+		cfg = TABLET_CONFIG,
 		youTubePlayerView = YouTubePlayerView(ctx),
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -582,7 +593,7 @@ private fun CenterTablet50sPreview() {
 			year = "1956",
 		),
 		onAction = {},
-		cfg = TABLET_CFG,
+		cfg = TABLET_CONFIG,
 		youTubePlayerView = YouTubePlayerView(ctx),
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -605,7 +616,7 @@ private fun CenterTablet2000sPreview() {
 			year = "2003",
 		),
 		onAction = {},
-		cfg = TABLET_CFG,
+		cfg = TABLET_CONFIG,
 		youTubePlayerView = YouTubePlayerView(ctx),
 		modifier = Modifier.fillMaxSize(),
 	)

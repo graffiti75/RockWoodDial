@@ -34,6 +34,8 @@ import com.cericatto.rockwooddial.data.Song
 import com.cericatto.rockwooddial.ui.main_screen.LayoutConfig
 import com.cericatto.rockwooddial.ui.main_screen.MainScreenAction
 import com.cericatto.rockwooddial.ui.main_screen.MainScreenState
+import com.cericatto.rockwooddial.ui.main_screen.PHONE_CONFIG
+import com.cericatto.rockwooddial.ui.main_screen.TABLET_CONFIG
 
 //--------------------------------------------------
 //  TrailsSection
@@ -191,52 +193,6 @@ fun TrailsPointer(
 //  Preview Helpers
 //--------------------------------------------------
 
-private val PHONE_CFG = LayoutConfig(
-	wToolbar = 2f,
-	wCenter = 8f,
-	wBottom = 2f,
-	wWindow = 2f,
-	wRadio = 5f,
-	wDecades = 1f,
-	wTrails = 1.2f,
-	wSongInfo = 1.8f,
-	seekbarWeight = 7f,
-	spacerWeight = 0f,
-	playBtnDp = 36f,
-	knobDp = 123.75f,
-	knobGapDp = 2f,
-	pointerWidthDp = 19f,
-	fontTitleSp = 49f,
-	fontDecadeSp = 27f,
-	fontSongSp = 21f,
-	sliderHeightDp = 12f,
-	trailsSpacerDp = 4f,
-	trailsInnerWeight = 3f
-)
-
-private val TABLET_CFG = LayoutConfig(
-	wToolbar = 2f,
-	wCenter = 8f,
-	wBottom = 2f,
-	wWindow = 2f,
-	wRadio = 5f,
-	wDecades = 1f,
-	wTrails = 1.2f,
-	wSongInfo = 1.8f,
-	seekbarWeight = 7f,
-	spacerWeight = 0f,
-	playBtnDp = 150f,
-	knobDp = 264f,
-	knobGapDp = 5f,
-	pointerWidthDp = 22f,
-	fontTitleSp = 77f,
-	fontDecadeSp = 53f,
-	fontSongSp = 40f,
-	sliderHeightDp = 14f,
-	trailsSpacerDp = 4f,
-	trailsInnerWeight = 3f
-)
-
 private fun previewState(decade: String) = MainScreenState(
 	songs = listOf(
 		Song(
@@ -270,7 +226,7 @@ private fun TrailsSectionPhone70sPreview() {
 	TrailsSection(
 		state = previewState("70"),
 		onAction = {},
-		cfg = PHONE_CFG,
+		cfg = PHONE_CONFIG,
 		modifier = Modifier.fillMaxSize(),
 	)
 }
@@ -287,7 +243,7 @@ private fun TrailsSectionPhone50sPreview() {
 	TrailsSection(
 		state = previewState("50"),
 		onAction = {},
-		cfg = PHONE_CFG,
+		cfg = PHONE_CONFIG,
 		modifier = Modifier.fillMaxSize(),
 	)
 }
@@ -304,7 +260,7 @@ private fun TrailsSectionPhone2000sPreview() {
 	TrailsSection(
 		state = previewState("2000"),
 		onAction = {},
-		cfg = PHONE_CFG,
+		cfg = PHONE_CONFIG,
 		modifier = Modifier.fillMaxSize(),
 	)
 }
@@ -321,7 +277,7 @@ private fun TrailsSectionTablet70sPreview() {
 	TrailsSection(
 		state = previewState("70"),
 		onAction = {},
-		cfg = TABLET_CFG,
+		cfg = TABLET_CONFIG,
 		modifier = Modifier.fillMaxSize(),
 	)
 }
@@ -338,7 +294,7 @@ private fun TrailsSectionTablet90sPreview() {
 	TrailsSection(
 		state = previewState("90"),
 		onAction = {},
-		cfg = TABLET_CFG,
+		cfg = TABLET_CONFIG,
 		modifier = Modifier.fillMaxSize(),
 	)
 }
@@ -357,7 +313,7 @@ private fun TrailsSectionTablet90sPreview() {
 )
 @Composable
 private fun TrailsColumnPhonePreview() {
-	TrailsColumn(cfg = PHONE_CFG)
+	TrailsColumn(cfg = PHONE_CONFIG)
 }
 
 // TrailsColumn — tablet height (taller row, spacer stretches)
@@ -370,7 +326,7 @@ private fun TrailsColumnPhonePreview() {
 )
 @Composable
 private fun TrailsColumnTabletPreview() {
-	TrailsColumn(cfg = TABLET_CFG)
+	TrailsColumn(cfg = TABLET_CONFIG)
 }
 
 // TrailsColumn — extra tall (stress test: spacer must absorb height)
@@ -383,5 +339,5 @@ private fun TrailsColumnTabletPreview() {
 )
 @Composable
 private fun TrailsColumnExtraTallPreview() {
-	TrailsColumn(cfg = TABLET_CFG)
+	TrailsColumn(cfg = TABLET_CONFIG)
 }
