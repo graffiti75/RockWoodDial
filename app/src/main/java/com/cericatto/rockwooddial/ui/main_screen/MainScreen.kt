@@ -69,10 +69,13 @@ data class LayoutConfig(
 	val fontTitleSp: Float,
 	val fontDecadeSp: Float,
 	val fontSongSp: Float,
+	val fontSongTitleSp: Float,
 	val sliderHeightDp: Float,
 	val trailsSpacerDp: Float,
 	val trailsInnerWeight: Float,
-	val paddingBottomBetweenVuMetersAndYoutubePlayer: Float
+	val paddingBottomBetweenVuMetersAndYoutubePlayer: Float,
+	val vuMeterHeightWeight: Float,
+	val vuMeterNeedleLengthPercent: Float
 )
 
 val PHONE_CONFIG = LayoutConfig(
@@ -87,16 +90,19 @@ val PHONE_CONFIG = LayoutConfig(
 	seekbarWeight = 7f,
 	spacerWeight = 0f,
 	playBtnDp = 36f,
-	knobDp = 123.75f,
+	knobDp = 100f,
 	knobGapDp = 2f,
 	pointerWidthDp = 19f,
 	fontTitleSp = 49f,
-	fontDecadeSp = 20f,
+	fontDecadeSp = 28f,
 	fontSongSp = 21f,
+	fontSongTitleSp = 23f,
 	sliderHeightDp = 12f,
 	trailsSpacerDp = 4f,
 	trailsInnerWeight = 3f,
-	paddingBottomBetweenVuMetersAndYoutubePlayer = 10f
+	paddingBottomBetweenVuMetersAndYoutubePlayer = 10f,
+	vuMeterHeightWeight = 0.35f,
+	vuMeterNeedleLengthPercent = 0.9f
 )
 
 val TABLET_CONFIG = LayoutConfig(
@@ -110,17 +116,20 @@ val TABLET_CONFIG = LayoutConfig(
 	wSongInfo = 1.8f,
 	seekbarWeight = 7f,
 	spacerWeight = 0f,
-	playBtnDp = 150f,
+	playBtnDp = 120f,
 	knobDp = 171f,
 	knobGapDp = 5f,
 	pointerWidthDp = 22f,
 	fontTitleSp = 77f,
-	fontDecadeSp = 36f,
+	fontDecadeSp = 32f,
 	fontSongSp = 40f,
+	fontSongTitleSp = 44f,
 	sliderHeightDp = 14f,
 	trailsSpacerDp = 4f,
 	trailsInnerWeight = 3f,
-	paddingBottomBetweenVuMetersAndYoutubePlayer = 50f
+	paddingBottomBetweenVuMetersAndYoutubePlayer = 50f,
+	vuMeterHeightWeight = 0.25f,
+	vuMeterNeedleLengthPercent = 0.8f
 )
 
 //--------------------------------------------------
@@ -399,11 +408,11 @@ fun MainScreenPhonePreview() {
 	val state = MainScreenState(
 		songs = listOf(
 			Song(
-				"80",
-				"1984",
-				"AC/DC",
-				"Hells Bells",
-				"etAIpkdhU9Q"
+				"70",
+				"1972",
+				"James Brown",
+				"I Got Ants In My Pants (And I Want To Dance)",
+				"fB-hpewwEiY"
 			)
 		),
 		isLoading = false,

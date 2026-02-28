@@ -31,9 +31,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cericatto.rockwooddial.ui.main_screen.LayoutConfig
+import com.cericatto.rockwooddial.ui.main_screen.PHONE_CONFIG
+import com.cericatto.rockwooddial.ui.main_screen.TABLET_CONFIG
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import kotlinx.coroutines.delay
 import kotlin.math.cos
+import kotlin.math.min
 import kotlin.math.sin
 
 // Needle sweep range in degrees.
@@ -44,6 +48,7 @@ private const val MAX_ANGLE = 45f
 @Composable
 fun VuMetersRow(
 	playerState: PlayerConstants.PlayerState,
+	cfg: LayoutConfig,
 	modifier: Modifier = Modifier,
 ) {
 	Row(
@@ -51,11 +56,13 @@ fun VuMetersRow(
 		horizontalArrangement = Arrangement.spacedBy(4.dp),
 	) {
 		PowerMeter(
+			cfg = cfg,
 			modifier = Modifier
 				.weight(1f)
 				.fillMaxHeight(),
 		)
 		SignalMeter(
+			cfg = cfg,
 			playerState = playerState,
 			modifier = Modifier
 				.weight(1f)
@@ -66,6 +73,7 @@ fun VuMetersRow(
 
 @Composable
 private fun PowerMeter(
+	cfg: LayoutConfig,
 	modifier: Modifier = Modifier,
 ) {
 	val context = LocalContext.current
@@ -88,6 +96,7 @@ private fun PowerMeter(
 	)
 
 	VuMeterCanvas(
+		cfg = cfg,
 		label = "POWER",
 		needleAngle = needleAngle,
 		modifier = modifier,
@@ -96,6 +105,7 @@ private fun PowerMeter(
 
 @Composable
 private fun SignalMeter(
+	cfg: LayoutConfig,
 	playerState: PlayerConstants.PlayerState,
 	modifier: Modifier = Modifier,
 ) {
@@ -112,6 +122,7 @@ private fun SignalMeter(
 	)
 
 	VuMeterCanvas(
+		cfg = cfg,
 		label = "SIGNAL",
 		needleAngle = needleAngle,
 		modifier = modifier,
@@ -120,6 +131,7 @@ private fun SignalMeter(
 
 @Composable
 private fun VuMeterCanvas(
+	cfg: LayoutConfig,
 	label: String,
 	needleAngle: Float,
 	modifier: Modifier = Modifier,
@@ -136,26 +148,34 @@ private fun VuMeterCanvas(
 			modifier = Modifier
 				.fillMaxWidth()
 				.weight(1f)
+				.padding(10.dp)
 		) {
 			Canvas(modifier = Modifier.fillMaxSize()) {
 				val w = size.width
 				val h = size.height
 
-				// Pivot point: center-bottom of the canvas
 				val pivotX = w / 2f
-				val pivotY = h * 0.85f
+				// Push pivot below the canvas — not visible, but arc sweeps nicely inside
+				val pivotY = h * 1.5f
 
-				// Arc radius
-				val arcRadius = w * 0.42f
+				// Now needle length is large but tip stays within bounds
+				// At 45° and 135°, tip Y = pivotY - needleLength * sin(45°) must be >= 0
+				// → needleLength <= pivotY / sin(45°)
+				// Tip X = pivotX ± needleLength * cos(45°) must be within [0, w]
+				// → needleLength <= pivotX / cos(45°)
+				val maxByX = min(pivotX, w - pivotX) / cos(Math.toRadians(45.0)).toFloat()
+				val maxByY = pivotY / sin(Math.toRadians(45.0)).toFloat()
+				val needleLength = min(maxByX, maxByY) * cfg.vuMeterNeedleLengthPercent
+
+				val arcRadius = needleLength * 0.85f
+				val arcStroke = h * 0.07f
 
 				// Draw the blue arc
 				val arcColor = Color(0xFF1E6FD9)
-				val arcStroke = h * 0.07f
 				val arcSteps = 60
 				for (i in 0 until arcSteps) {
 					val t1 = i.toFloat() / arcSteps
 					val t2 = (i + 1).toFloat() / arcSteps
-					// Sweep from MIN_ANGLE to MAX_ANGLE (135 down to 45)
 					val a1 = Math.toRadians((MIN_ANGLE - t1 * (MIN_ANGLE - MAX_ANGLE)).toDouble())
 					val a2 = Math.toRadians((MIN_ANGLE - t2 * (MIN_ANGLE - MAX_ANGLE)).toDouble())
 					val x1 = pivotX + arcRadius * cos(a1).toFloat()
@@ -192,9 +212,8 @@ private fun VuMeterCanvas(
 					)
 				}
 
-				// Draw the needle — 50% shorter
+				// Draw the needle
 				val needleRad = Math.toRadians(needleAngle.toDouble())
-				val needleLength = (arcRadius + arcStroke) * 0.5f
 				val needleEndX = pivotX + needleLength * cos(needleRad).toFloat()
 				val needleEndY = pivotY - needleLength * sin(needleRad).toFloat()
 				drawLine(
@@ -238,6 +257,7 @@ private fun VuMeterCanvas(
 @Composable
 private fun VuMetersIdlePreview() {
 	VuMetersRow(
+		cfg = PHONE_CONFIG,
 		playerState = PlayerConstants.PlayerState.UNSTARTED,
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -253,6 +273,7 @@ private fun VuMetersIdlePreview() {
 @Composable
 private fun VuMetersBufferingPreview() {
 	VuMetersRow(
+		cfg = PHONE_CONFIG,
 		playerState = PlayerConstants.PlayerState.BUFFERING,
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -268,6 +289,7 @@ private fun VuMetersBufferingPreview() {
 @Composable
 private fun VuMetersPlayingPreview() {
 	VuMetersRow(
+		cfg = PHONE_CONFIG,
 		playerState = PlayerConstants.PlayerState.PLAYING,
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -283,6 +305,7 @@ private fun VuMetersPlayingPreview() {
 @Composable
 private fun VuMetersPausedPreview() {
 	VuMetersRow(
+		cfg = PHONE_CONFIG,
 		playerState = PlayerConstants.PlayerState.PAUSED,
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -298,6 +321,7 @@ private fun VuMetersPausedPreview() {
 @Composable
 private fun VuMetersEndedPreview() {
 	VuMetersRow(
+		cfg = PHONE_CONFIG,
 		playerState = PlayerConstants.PlayerState.ENDED,
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -313,6 +337,7 @@ private fun VuMetersEndedPreview() {
 @Composable
 private fun VuMeterCanvasPowerMinPreview() {
 	VuMeterCanvas(
+		cfg = PHONE_CONFIG,
 		label = "POWER",
 		needleAngle = MIN_ANGLE,
 		modifier = Modifier.fillMaxSize(),
@@ -329,6 +354,7 @@ private fun VuMeterCanvasPowerMinPreview() {
 @Composable
 private fun VuMeterCanvasPowerMidPreview() {
 	VuMeterCanvas(
+		cfg = PHONE_CONFIG,
 		label = "POWER",
 		needleAngle = 90f,
 		modifier = Modifier.fillMaxSize(),
@@ -345,6 +371,7 @@ private fun VuMeterCanvasPowerMidPreview() {
 @Composable
 private fun VuMeterCanvasPowerMaxPreview() {
 	VuMeterCanvas(
+		cfg = PHONE_CONFIG,
 		label = "POWER",
 		needleAngle = MAX_ANGLE,
 		modifier = Modifier.fillMaxSize(),
@@ -361,6 +388,7 @@ private fun VuMeterCanvasPowerMaxPreview() {
 @Composable
 private fun VuMeterCanvasSignalMinPreview() {
 	VuMeterCanvas(
+		cfg = PHONE_CONFIG,
 		label = "SIGNAL",
 		needleAngle = MIN_ANGLE,
 		modifier = Modifier.fillMaxSize(),
@@ -377,6 +405,7 @@ private fun VuMeterCanvasSignalMinPreview() {
 @Composable
 private fun VuMeterCanvasSignalMidPreview() {
 	VuMeterCanvas(
+		cfg = PHONE_CONFIG,
 		label = "SIGNAL",
 		needleAngle = 90f,
 		modifier = Modifier.fillMaxSize(),
@@ -393,6 +422,7 @@ private fun VuMeterCanvasSignalMidPreview() {
 @Composable
 private fun VuMeterCanvasSignalMaxPreview() {
 	VuMeterCanvas(
+		cfg = PHONE_CONFIG,
 		label = "SIGNAL",
 		needleAngle = MAX_ANGLE,
 		modifier = Modifier.fillMaxSize(),
@@ -409,6 +439,7 @@ private fun VuMeterCanvasSignalMaxPreview() {
 @Composable
 private fun VuMetersTabletPreview() {
 	VuMetersRow(
+		cfg = TABLET_CONFIG,
 		playerState = PlayerConstants.PlayerState.PLAYING,
 		modifier = Modifier.fillMaxSize(),
 	)
@@ -424,6 +455,7 @@ private fun VuMetersTabletPreview() {
 @Composable
 private fun VuMetersPhonePreview() {
 	VuMetersRow(
+		cfg = PHONE_CONFIG,
 		playerState = PlayerConstants.PlayerState.PLAYING,
 		modifier = Modifier.fillMaxSize(),
 	)

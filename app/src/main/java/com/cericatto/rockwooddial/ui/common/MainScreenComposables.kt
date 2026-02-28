@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -109,36 +110,11 @@ fun MainScreenCenter(
 			// VU Meters Row
 			VuMetersRow(
 				playerState = playerState,
+				cfg = cfg,
 				modifier = Modifier
 					.fillMaxWidth()
-					.weight(0.2f),
+					.weight(cfg.vuMeterHeightWeight),
 			)
-			/*
-			Row(
-				Modifier
-					.fillMaxWidth()
-					.weight(0.2f)
-			) {
-				Image(
-					painter = painterResource(R.drawable.power),
-					contentDescription = "Power",
-					contentScale = ContentScale.FillBounds,
-					modifier = Modifier
-						.weight(1f)
-						.fillMaxHeight()
-						.padding(2.dp),
-				)
-				Image(
-					painter = painterResource(R.drawable.signal),
-					contentDescription = "Signal",
-					contentScale = ContentScale.FillBounds,
-					modifier = Modifier
-						.weight(1f)
-						.fillMaxHeight()
-						.padding(2.dp),
-				)
-			}
-			*/
 			VerticalDivider(modifier = Modifier.size(
 				cfg.paddingBottomBetweenVuMetersAndYoutubePlayer.dp)
 			)
@@ -154,7 +130,21 @@ fun MainScreenCenter(
 					modifier = Modifier
 						.fillMaxWidth()
 						.aspectRatio(16f / 9f)
-						.align(Alignment.TopCenter),
+						.align(Alignment.TopCenter)
+				)
+				// Transparent overlay to block all touches from reaching the WebView
+				Box(
+					modifier = Modifier
+						.fillMaxWidth()
+						.aspectRatio(16f / 9f)
+						.align(Alignment.TopCenter)
+						.pointerInput(Unit) {
+							awaitPointerEventScope {
+								while (true) {
+									awaitPointerEvent()
+								}
+							}
+						}
 				)
 			}
 		}
@@ -287,32 +277,39 @@ private fun SongInfoSection(
 	modifier: Modifier = Modifier,
 ) {
 	val song = state.currentSong
-	Box(modifier.padding(start = 10.dp, end = 10.dp)) {
+	Box(
+		modifier.fillMaxWidth()
+			.padding(
+			start = 10.dp,
+			end = 10.dp
+		)
+	) {
 		Column(
-			Modifier.fillMaxSize(),
 			verticalArrangement = Arrangement.SpaceEvenly,
+			horizontalAlignment = Alignment.Start,
+			modifier = Modifier.fillMaxSize(),
 		) {
 			Text(
 				text = song?.band ?: "",
 				color = Color.White,
-				fontSize = cfg.fontSongSp.sp,
+				fontSize = cfg.fontSongTitleSp.sp,
 				fontWeight = FontWeight.Bold,
 				maxLines = 1,
-				overflow = TextOverflow.Ellipsis,
+				overflow = TextOverflow.Ellipsis
 			)
 			Text(
 				text = song?.songTitle ?: "",
 				color = SteelHighlight,
 				fontSize = cfg.fontSongSp.sp,
 				maxLines = 1,
-				overflow = TextOverflow.Ellipsis,
-				modifier = Modifier.padding(end = 172.dp),
+				softWrap = false,
+				overflow = TextOverflow.Ellipsis
 			)
 			Text(
 				text = song?.year ?: "",
 				color = SteelHighlight,
 				fontSize = cfg.fontSongSp.sp,
-				maxLines = 1,
+				maxLines = 1
 			)
 		}
 	}
