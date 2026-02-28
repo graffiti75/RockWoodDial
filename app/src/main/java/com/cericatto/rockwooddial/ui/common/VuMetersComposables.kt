@@ -139,7 +139,9 @@ private fun VuMeterCanvas(
 	Column(
 		modifier = modifier
 			.background(Color.Black)
-			.border(1.dp, Color(0xFF888888))
+			.border(3.dp, Color(0xFF666666))
+			.padding(3.dp)
+			.border(1.dp, Color(0xFFAAAAAA))
 			.padding(4.dp),
 		horizontalAlignment = Alignment.CenterHorizontally,
 		verticalArrangement = Arrangement.SpaceBetween,
@@ -238,7 +240,7 @@ private fun VuMeterCanvas(
 			color = Color(0xFF1E6FD9),
 			fontSize = 10.sp,
 			fontWeight = FontWeight.Bold,
-			modifier = Modifier.padding(bottom = 2.dp),
+			letterSpacing = 3.sp
 		)
 	}
 }
