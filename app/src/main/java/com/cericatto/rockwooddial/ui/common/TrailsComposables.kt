@@ -30,10 +30,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import com.cericatto.rockwooddial.R
+import com.cericatto.rockwooddial.data.Song
 import com.cericatto.rockwooddial.ui.main_screen.LayoutConfig
 import com.cericatto.rockwooddial.ui.main_screen.MainScreenAction
 import com.cericatto.rockwooddial.ui.main_screen.MainScreenState
-import com.cericatto.rockwooddial.data.Song
 
 //--------------------------------------------------
 //  TrailsSection
@@ -167,19 +167,21 @@ fun TrailsPointer(
 		modifier = Modifier
 			.width(cfg.pointerWidthDp.dp)
 			.fillMaxHeight()
+			// Centers the pencil horizontally on offsetX by shifting left by half its width.
 			.offset { IntOffset((offsetX - pointerWPx / 2f).toInt(), 0) }
 			.zIndex(2f)
 			.pointerInput(Unit) {
+				var currentX = offsetX
 				detectDragGestures(
 					onDragEnd = {
-						val seg = (offsetX / segWidthPx).toInt().coerceIn(0, numSegs - 1)
+						val seg = (currentX / segWidthPx).toInt().coerceIn(0, numSegs - 1)
 						onOffsetXChange(segWidthPx * seg + segWidthPx / 2f)
 						onAction(MainScreenAction.ChangeDecade(decades[seg]))
 					},
 				) { change, drag ->
 					change.consume()
-					onOffsetXChange((offsetX + drag.x).coerceIn(0f, totalWidthPx))
-					onAction(MainScreenAction.OnTunerChanged(offsetX / totalWidthPx))
+					currentX = (currentX + drag.x).coerceIn(0f, totalWidthPx)
+					onOffsetXChange(currentX)
 				}
 			},
 	)
