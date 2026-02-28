@@ -1,8 +1,13 @@
 package com.cericatto.rockwooddial.ui.common
 
 import android.app.Activity
+import android.media.AudioManager
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -10,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
@@ -18,14 +24,27 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cericatto.rockwooddial.R
+import com.cericatto.rockwooddial.ui.main_screen.LayoutConfig
+import com.cericatto.rockwooddial.ui.main_screen.PHONE_CONFIG
+import com.cericatto.rockwooddial.ui.main_screen.TABLET_CONFIG
 import com.cericatto.rockwooddial.ui.theme.NeonBlue
+import kotlin.math.atan2
+import kotlin.math.roundToInt
 
 @Composable
 fun LockScreenOrientation(orientation: Int) {
@@ -89,9 +108,84 @@ fun LoadingOverlay() {
 	}
 }
 
-// ─────────────────────────────────────────────────────────
+@Composable
+fun KnobVolumeControl(
+	cfg: LayoutConfig,
+	modifier: Modifier = Modifier,
+) {
+	val context = LocalContext.current
+	val audioManager = context.getSystemService(AudioManager::class.java)
+
+	// Guard against AudioManager returning 0 in preview environment
+	val maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC).toFloat()
+		.takeIf { it > 0f } ?: 1f
+	val initialVol = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC).toFloat()
+		.coerceAtLeast(0f)
+	val initialAngle = 30f + (initialVol / maxVol) * 120f
+
+	var knobAngle by remember { mutableFloatStateOf(initialAngle) }
+	val animatedAngle by animateFloatAsState(
+		targetValue = knobAngle,
+		animationSpec = tween(durationMillis = 100),
+		label = "knob_rotation"
+	)
+
+	Image(
+		painter = painterResource(R.drawable.button_round_big),
+		contentDescription = "Volume knob",
+		contentScale = ContentScale.Fit,
+		modifier = modifier
+			.graphicsLayer {
+				rotationZ = animatedAngle
+			}
+			.pointerInput(Unit) {
+				val centerX = size.width / 2f
+				val centerY = size.height / 2f
+				var lastAngle = knobAngle
+
+				detectDragGestures(
+					onDragStart = { offset ->
+						lastAngle = Math.toDegrees(
+							atan2(
+								(offset.y - centerY).toDouble(),
+								(offset.x - centerX).toDouble()
+							)
+						).toFloat()
+					}
+				) { change, _ ->
+					change.consume()
+
+					val currentTouchAngle = Math.toDegrees(
+						atan2(
+							(change.position.y - centerY).toDouble(),
+							(change.position.x - centerX).toDouble()
+						)
+					).toFloat()
+
+					var delta = currentTouchAngle - lastAngle
+					if (delta > 180f) delta -= 360f
+					if (delta < -180f) delta += 360f
+
+					lastAngle = currentTouchAngle
+					knobAngle = (knobAngle + delta).coerceIn(30f, 150f)
+
+					val volumeFraction = (knobAngle - 30f) / 120f
+					val newVol = (volumeFraction * maxVol)
+						.roundToInt()
+						.coerceIn(0, maxVol.toInt())
+					audioManager.setStreamVolume(
+						AudioManager.STREAM_MUSIC,
+						newVol,
+						0
+					)
+				}
+			},
+	)
+}
+
+//--------------------------------------------------
 //  Previews
-// ─────────────────────────────────────────────────────────
+//--------------------------------------------------
 
 // ErrorBanner — short message (phone landscape)
 @Preview(
@@ -181,5 +275,113 @@ private fun ErrorBannerOverDarkPreview() {
 	Box(Modifier.fillMaxSize().background(Color(0xFF3B2A1A))) {
 		LoadingOverlay()
 		ErrorBanner(message = "Player error: UNKNOWN", onDismiss = {})
+	}
+}
+
+//--------------------------------------------------
+//  KnobVolumeControl Previews
+//--------------------------------------------------
+
+// Phone — knob at minimum volume (30°)
+@Preview(
+	name = "KnobVolumeControl / Phone / Volume min",
+	showBackground = true,
+	backgroundColor = 0xFF000000,
+	widthDp = 124,
+	heightDp = 124,
+)
+@Composable
+private fun KnobVolumeMinPhonePreview() {
+	KnobVolumeControl(
+		cfg = PHONE_CONFIG,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Phone — knob at mid volume (90°)
+@Preview(
+	name = "KnobVolumeControl / Phone / Volume mid",
+	showBackground = true,
+	backgroundColor = 0xFF000000,
+	widthDp = 124,
+	heightDp = 124,
+)
+@Composable
+private fun KnobVolumeMidPhonePreview() {
+	KnobVolumeControl(
+		cfg = PHONE_CONFIG,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Phone — knob at maximum volume (150°)
+@Preview(
+	name = "KnobVolumeControl / Phone / Volume max",
+	showBackground = true,
+	backgroundColor = 0xFF000000,
+	widthDp = 124,
+	heightDp = 124,
+)
+@Composable
+private fun KnobVolumeMaxPhonePreview() {
+	KnobVolumeControl(
+		cfg = PHONE_CONFIG,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// Tablet — knob size
+@Preview(
+	name = "KnobVolumeControl / Tablet",
+	showBackground = true,
+	backgroundColor = 0xFF000000,
+	widthDp = 171,
+	heightDp = 171,
+)
+@Composable
+private fun KnobVolumeTabletPreview() {
+	KnobVolumeControl(
+		cfg = TABLET_CONFIG,
+		modifier = Modifier.fillMaxSize(),
+	)
+}
+
+// KnobVolumeControl inside realistic bottom bar context — phone
+@Preview(
+	name = "KnobVolumeControl / Phone / In context",
+	showBackground = true,
+	backgroundColor = 0xFF000000,
+	device = "spec:width=640dp,height=80dp,dpi=320",
+)
+@Composable
+private fun KnobVolumeInContextPhonePreview() {
+	Box(Modifier.fillMaxSize()) {
+		KnobVolumeControl(
+			cfg = PHONE_CONFIG,
+			modifier = Modifier
+				.size(PHONE_CONFIG.knobDp.dp)
+				.align(Alignment.BottomEnd)
+				.padding(bottom = 8.dp, end = 8.dp),
+		)
+	}
+}
+
+// KnobVolumeControl inside realistic bottom bar context — tablet
+@Preview(
+	name = "KnobVolumeControl / Tablet / In context",
+	showBackground = true,
+	backgroundColor = 0xFF000000,
+	device = "spec:width=1280dp,height=120dp,dpi=240",
+)
+@Composable
+private fun KnobVolumeInContextTabletPreview() {
+	Box(Modifier.fillMaxSize()) {
+		KnobVolumeControl(
+			cfg = TABLET_CONFIG,
+			modifier = Modifier
+				.size(TABLET_CONFIG.knobDp.dp)
+				.align(Alignment.BottomEnd)
+				.padding(bottom = 8.dp, end = 8.dp),
+		)
 	}
 }

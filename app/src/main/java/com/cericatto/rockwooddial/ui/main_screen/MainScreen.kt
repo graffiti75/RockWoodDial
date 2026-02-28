@@ -3,7 +3,6 @@ package com.cericatto.rockwooddial.ui.main_screen
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cericatto.rockwooddial.R
 import com.cericatto.rockwooddial.data.Song
 import com.cericatto.rockwooddial.ui.common.ErrorBanner
+import com.cericatto.rockwooddial.ui.common.KnobVolumeControl
 import com.cericatto.rockwooddial.ui.common.LoadingOverlay
 import com.cericatto.rockwooddial.ui.common.LockScreenOrientation
 import com.cericatto.rockwooddial.ui.common.MainScreenBottom
@@ -90,7 +90,7 @@ val PHONE_CONFIG = LayoutConfig(
 	seekbarWeight = 7f,
 	spacerWeight = 0f,
 	playBtnDp = 36f,
-	knobDp = 100f,
+	knobDp = 104f,
 	knobGapDp = 2f,
 	pointerWidthDp = 19f,
 	fontTitleSp = 49f,
@@ -117,7 +117,7 @@ val TABLET_CONFIG = LayoutConfig(
 	seekbarWeight = 7f,
 	spacerWeight = 0f,
 	playBtnDp = 120f,
-	knobDp = 171f,
+	knobDp = 175f,
 	knobGapDp = 5f,
 	pointerWidthDp = 22f,
 	fontTitleSp = 77f,
@@ -276,6 +276,14 @@ private fun MainScreenContent(
 			)
 		}
 		// Knob — lives in the outer Box to share coordinate space with MainScreenBottom
+		KnobVolumeControl(
+			cfg = cfg,
+			modifier = Modifier
+				.size(cfg.knobDp.dp)
+				.align(Alignment.BottomEnd)
+				.padding(bottom = 8.dp, end = 8.dp),
+		)
+		/*
 		Image(
 			painter = painterResource(R.drawable.button_round_big),
 			contentDescription = "Skip song",
@@ -283,8 +291,10 @@ private fun MainScreenContent(
 			modifier = Modifier
 				.size(cfg.knobDp.dp)
 				.align(Alignment.BottomEnd)
+				.padding(bottom = 10.dp, end = 10.dp)
 				.clickable { onAction(MainScreenAction.NextSong) },
 		)
+		 */
 		when {
 			state.isLoading -> LoadingOverlay()
 			state.error != null -> ErrorBanner(
