@@ -23,6 +23,8 @@ ksp = "2.0.21-1.0.28"
 kotlinxSerializaton = "1.7.3"
 composeNavigation = "2.8.3"
 
+splashScreenVersion = "1.0.1"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -54,6 +56,8 @@ hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", ve
 
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializaton" }
+
+splash-screen = { module = "androidx.core:core-splashscreen", version.ref = "splashScreenVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

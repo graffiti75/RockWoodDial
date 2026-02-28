@@ -76,6 +76,9 @@ dependencies {
 	implementation(libs.navigation.compose)
 	implementation(libs.kotlinx.serialization.json)
 
+	// Splash Screen
+	implementation(libs.splash.screen)
+
 	// Tests
 	testImplementation(libs.junit)
 	testImplementation(libs.mockk)
