@@ -4,31 +4,28 @@ A vintage-style Android music app that lets you explore and listen to classic ro
 
 ---
 
+## Videos
+
+### Tablet (Samsung Galaxy S6)
+
+[![Rock Dial Dates running on tablet Samsung Galaxy S6](https://img.youtube.com/vi/Rl3tOrr5bec/0.jpg)](https://www.youtube.com/watch?v=Rl3tOrr5bec)
+
+### Phone (Pixel 8A)
+
+[![Rock Dial Dates running on phone Pixel 8A](https://img.youtube.com/vi/rQAgr1SCh48/0.jpg)](https://www.youtube.com/watch?v=rQAgr1SCh48)
+
 ## 📱 Screenshots
 
-[Rock Dial Dates running on tablet Samsung Galaxy S6](https://www.youtube.com/watch?v=Rl3tOrr5bec)
+### Phone (Pixel 8A)
 
-[Rock Dial Dates running on phone Pixel 8A](https://www.youtube.com/watch?v=rQAgr1SCh48)
+![](https://raw.githubusercontent.com/graffiti75/RockWoodDial/master/media/phone/Screenshot_20260301-151629.png)
+![](https://raw.githubusercontent.com/graffiti75/RockWoodDial/master/media/phone/Screenshot_20260301-151648.png)
+![](https://raw.githubusercontent.com/graffiti75/RockWoodDial/master/media/phone/Screenshot_20260301-151707.png)
 
-### Videos
+### Tablet (Samsung Galaxy S6)
 
-| Tablet (Samsung Galaxy S6) | Phone (Pixel 8A) |
-|:---:|:---:|
-| [![Tablet](https://img.youtube.com/vi/Rl3tOrr5bec/0.jpg)](https://www.youtube.com/watch?v=Rl3tOrr5bec) | [![Phone](https://img.youtube.com/vi/rQAgr1SCh48/0.jpg)](https://www.youtube.com/watch?v=rQAgr1SCh48) |
-
-### Phone
-
-| Phone (Pixel 8A) |
-|:---:|:---:|:---:|
-| ![](https://raw.githubusercontent.com/graffiti75/RockWoodDial/master/media/phone/Screenshot_20260301-151629.png) | ![](https://raw.githubusercontent.com/graffiti75/RockWoodDial/master/media/phone/Screenshot_20260301-151648.png) | ![](https://raw.githubusercontent.com/graffiti75/RockWoodDial/master/media/phone/Screenshot_20260301-151707.png) |
-
-### Tablet
-
-| Tablet (Samsung Galaxy S6) |
-|:---:|:---:|
-| ![](https://raw.githubusercontent.com/graffiti75/RockWoodDial/master/media/tablet/Screenshot_20260301_151448_Rock%20Dial%20Dates.jpg) | ![](https://raw.githubusercontent.com/graffiti75/RockWoodDial/master/media/tablet/Screenshot_20260301_151542_Rock%20Dial%20Dates.jpg) |
-
----
+![](https://raw.githubusercontent.com/graffiti75/RockWoodDial/master/media/tablet/Screenshot_20260301_151448_Rock%20Dial%20Dates.jpg)
+![](https://raw.githubusercontent.com/graffiti75/RockWoodDial/master/media/tablet/Screenshot_20260301_151542_Rock%20Dial%20Dates.jpg)
 
 ## 🎯 Features
 
