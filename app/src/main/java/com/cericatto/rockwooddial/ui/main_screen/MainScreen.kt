@@ -184,15 +184,9 @@ fun MainScreen(
 		youtubePlayer?.let { player ->
 			state.currentSong?.let { song ->
 				if (state.isPlaying) {
-					player.loadVideo(
-						song.youtubeId,
-						state.currentPlaybackTimeSeconds.toFloat()
-					)
+					player.loadVideo(song.youtubeId, 0f)
 				} else {
-					player.cueVideo(
-						song.youtubeId,
-						state.currentPlaybackTimeSeconds.toFloat()
-					)
+					player.cueVideo(song.youtubeId,0f)
 				}
 			}
 		}
