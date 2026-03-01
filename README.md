@@ -6,13 +6,12 @@ A vintage-style Android music app that lets you explore and listen to classic ro
 
 ## Videos
 
-### Tablet (Samsung Galaxy S6)
+Running on phone Pixel 8A:
 
-[![Rock Dial Dates running on tablet Samsung Galaxy S6](https://img.youtube.com/vi/Rl3tOrr5bec/0.jpg)](https://www.youtube.com/watch?v=Rl3tOrr5bec)
+[![Rock Dial Dates](https://raw.githubusercontent.com/graffiti75/RockWoodDial/refs/heads/master/media/rock_dial_dates.gif)](https://github.com/graffiti75/RockWoodDial)
 
-### Phone (Pixel 8A)
-
-[![Rock Dial Dates running on phone Pixel 8A](https://img.youtube.com/vi/rQAgr1SCh48/0.jpg)](https://www.youtube.com/watch?v=rQAgr1SCh48)
+- [Rock Dial Dates running on tablet Samsung Galaxy S6](https://www.youtube.com/watch?v=Rl3tOrr5bec)
+- [Rock Dial Dates running on phone Pixel 8A](https://www.youtube.com/watch?v=rQAgr1SCh48)
 
 ## 📱 Screenshots
 
